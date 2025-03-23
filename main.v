@@ -1,54 +1,29 @@
 module main
 
 import os
+import commands
+import util
 
-const colors = {
-	"black":   "\e[30m"
-	"red":     "\e[31m"
-	"green":   "\e[32m"
-	"yellow":  "\e[33m"
-	"blue":    "\e[34m"
-	"magenta": "\e[35m"
-	"cyan":    "\e[36m"
-	"white":   "\e[37m"
-
-	"bg_black":   "\e[40m"
-	"bg_red":     "\e[41m"
-	"bg_green":   "\e[42m"
-	"bg_yellow":  "\e[43m"
-	"bg_blue":    "\e[44m"
-	"bg_magenta": "\e[45m"
-	"bg_cyan":    "\e[46m"
-	"bg_white":   "\e[47m"
-
-	"reset":   "\e[0m"
-}
-
-fn test_comment(args []string) {
-	match args[1] {
-		'group' {
-			println('Create Group! name: ' + args[2])
-		}
-		'template' {
-			println('Create Template! name: ' + args[2])
-		}
-		else {
-			println('use create <group/template> <name>')
-		}
-	}
+fn init_directory() {
+	os.mkdir('templates') or {}
+	println('${util.colors[util.ColorName.yellow]}Template Directory Created!')
+	os.mkdir('groups') or {}
+	println('${util.colors[util.ColorName.yellow]}Groups Directory Created!')
 }
 
 fn main() {
 	mut app_running := true
 	mut cmd_map := map[string]fn ([]string){}
 
-	cmd_map['create'] = test_comment
+	cmd_map[commands.get_name()] = commands.create_command
 
 	logo := os.read_file("ascii_art.txt") or { panic("Fehler beim Laden!") }
-	println('${colors['cyan']}${logo}')
+	println('${util.colors[util.ColorName.cyan]}${logo}')
+
+	init_directory()
 
 	for app_running {
-		print('${colors['cyan']}variacloud:')
+		print('${util.colors[util.ColorName.cyan]}variacloud:')
 		cmd_line := os.get_line()
 		args := cmd_line.split(' ')
 		for key, fun in cmd_map {
